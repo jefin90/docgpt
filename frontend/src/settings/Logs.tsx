@@ -7,6 +7,7 @@ import Dropdown from '../components/Dropdown';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { APIKeyData, LogData } from './types';
 import CoppyButton from '../components/CopyButton';
+import { useLoaderState } from '../hooks';
 
 export default function Logs() {
   const { t } = useTranslation();
@@ -15,8 +16,8 @@ export default function Logs() {
   const [logs, setLogs] = useState<LogData[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loadingChatbots, setLoadingChatbots] = useState(true);
-  const [loadingLogs, setLoadingLogs] = useState(true);
+  const [loadingChatbots, setLoadingChatbots] = useLoaderState(true);
+  const [loadingLogs, setLoadingLogs] = useLoaderState(true);
 
   const fetchChatbots = async () => {
     setLoadingChatbots(true);

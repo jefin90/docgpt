@@ -15,7 +15,7 @@ import DropdownMenu from '../components/DropdownMenu';
 import Input from '../components/Input';
 import SkeletonLoader from '../components/SkeletonLoader';
 import Spinner from '../components/Spinner';
-import { useDarkTheme } from '../hooks';
+import { useDarkTheme, useLoaderState } from '../hooks';
 import ChunkModal from '../modals/ChunkModal';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import { ActiveState, Doc, DocumentsProps } from '../models/misc';
@@ -54,7 +54,7 @@ export default function Documents({
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [modalState, setModalState] = useState<ActiveState>('INACTIVE');
   const [isOnboarding, setIsOnboarding] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useLoaderState(false);
   const [sortField, setSortField] = useState<'date' | 'tokens'>('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   // Pagination
@@ -214,12 +214,9 @@ export default function Documents({
           </button>
         </div>
 
-        {loading ? (
-          <SkeletonLoader count={1} />
-        ) : (
+         
           <div className="flex flex-col flex-grow">
             {' '}
-            {/* Removed overflow-auto */}
             <div className="border rounded-md border-gray-300 dark:border-silver/40 overflow-hidden">
               <table className="w-full min-w-[640px] table-auto">
                 <thead>
@@ -262,11 +259,13 @@ export default function Documents({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300 dark:divide-silver/40">
-                  {!currentDocuments?.length ? (
+                  {loading ? (
+                    <SkeletonLoader component="table" />
+                  ) : !currentDocuments?.length ? (
                     <tr>
                       <td
                         colSpan={4}
-                        className="py-4 text-center text-gray-700 dark:text-[#E0E0E] bg-transparent"
+                        className="py-4 text-center text-gray-700 dark:text-neutral-200 bg-transparent"
                       >
                         {t('settings.documents.noData')}
                       </td>
@@ -330,7 +329,7 @@ export default function Documents({
               </table>
             </div>
           </div>
-        )}
+        
       </div>
 
       <div className="mt-auto pt-4">
@@ -395,7 +394,7 @@ function DocumentChunks({
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [totalChunks, setTotalChunks] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useLoaderState(true);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [addModal, setAddModal] = useState<ActiveState>('INACTIVE');
   const [editModal, setEditModal] = useState<{
@@ -425,6 +424,7 @@ function DocumentChunks({
         });
     } catch (e) {
       console.log(e);
+      setLoading(false);
     }
   };
 
